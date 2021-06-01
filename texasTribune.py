@@ -9,4 +9,5 @@ op.add_argument("--disable-dec-sh-usage")
 
 driver = webdriver.Chrome(executable_path = os.environ.get("CHROMEDRIVER_PATH"), chrome_options=op)
 
+driver.get("https://www.youtube.com")
 print(driver.page_source)

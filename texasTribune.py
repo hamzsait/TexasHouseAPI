@@ -1,9 +1,10 @@
 import os
+import pprint
 from selenium import webdriver
 from time import sleep
 from pymongo import MongoClient
 from password import password
-import pprint
+
 
 
 def getWebdriver(local = False):

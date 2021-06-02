@@ -6,7 +6,6 @@ from pymongo import MongoClient
 from password import password
 
 
-
 def getWebdriver(local = False):
 
     if local:
@@ -66,19 +65,21 @@ def scrapeTexasCongress():
             driver.get(link)
             sleep(0.5)
 
-            social_media = dict()
+            data = dict()
+
+            data['_id'] = int(driver.find_element_by_xpath("//*[contains(text(),'District')]").text.split(' ')[1])
 
             buttons = driver.find_elements_by_class_name("c-button")
             for button in buttons:
                 button_link = button.get_attribute("href")
 
                 if ('facebook' in button_link):
-                    social_media['facebook'] = button_link
+                    data['facebook'] = button_link
 
                 if('twitter' in button_link):
-                    social_media['twitter'] = button_link
+                    data['twitter'] = button_link
 
-            tx_congress[(driver.find_element_by_class_name('politician-header').text.split('\n')[0].split('U.S. Representative ')[1].replace('.',''))] = social_media
+            tx_congress[(driver.find_element_by_class_name('politician-header').text.split('\n')[0].split('U.S. Representative ')[1].replace('.',''))] = data
     driver.close()
     return tx_congress
 
@@ -92,7 +93,7 @@ def deleteDB(db):
 
 def initDB(db, tx_congress):
     for congressman in tx_congress:
-        db.insert_one({'name':congressman})
+        db.insert_one({'_id':tx_congress[congressman]['_id'],'name':congressman,'twitter':tx_congress[congressman]['twitter'], 'facebook':tx_congress[congressman]['facebook']})
 
 def updateDB(db, tx_congress):
     for congressman in tx_congress:
@@ -101,9 +102,13 @@ def updateDB(db, tx_congress):
         db.update_one(filter, updated_values)
 
 def main():
+
     db = connectMongo()
+    # deleteDB(db)
     tx_congress = scrapeTexasCongress()
-    updateDB(db,tx_congress)
+    initDB(db, tx_congress)
+    # updateDB(db,tx_congress)
     printDB(db)
+
 
 main()

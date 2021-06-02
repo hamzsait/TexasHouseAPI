@@ -1,5 +1,6 @@
 import os
 import pprint
+import json
 from selenium import webdriver
 from time import sleep
 from pymongo import MongoClient
@@ -69,6 +70,24 @@ def scrapeTexasCongress():
 
             data['_id'] = int(driver.find_element_by_xpath("//*[contains(text(),'District')]").text.split(' ')[1])
 
+            try:
+                email = json.loads(driver.find_element_by_xpath("//*[contains(text(),'https://schema.org/')]").get_attribute('innerHTML'))['mainEntity'][0]['contactPoint'][0]['email']
+                data['email'] = email
+            except:
+                data['email'] = 'No Email'
+
+            try:
+                phone = json.loads(driver.find_element_by_xpath("//*[contains(text(),'https://schema.org/')]").get_attribute('innerHTML'))['mainEntity'][0]['contactPoint'][0]['telephone']
+                data['phone'] = phone
+            except:
+                data['phone'] = 'No Phone'
+
+            try:
+                image = json.loads(driver.find_element_by_xpath("//*[contains(text(),'https://schema.org/')]").get_attribute('innerHTML'))['image'][0]['url']
+                data['image'] = image
+            except:
+                data['image'] = 'No Image'
+
             buttons = driver.find_elements_by_class_name("c-button")
             for button in buttons:
                 button_link = button.get_attribute("href")
@@ -97,8 +116,8 @@ def initDB(db, tx_congress):
 
 def updateDB(db, tx_congress):
     for congressman in tx_congress:
-        filter = {'name': congressman}
-        updated_values = {'$set':{'twitter':tx_congress[congressman]['twitter'], 'facebook':tx_congress[congressman]['facebook']}}
+        filter = {'_id':tx_congress[congressman]['_id']}
+        updated_values = {'$set':{'name':congressman,'email':tx_congress[congressman]['email'], 'image':tx_congress[congressman]['image'],'phone':tx_congress[congressman]['phone'],'twitter':tx_congress[congressman]['twitter'], 'facebook':tx_congress[congressman]['facebook']}}
         db.update_one(filter, updated_values)
 
 def main():
@@ -106,8 +125,8 @@ def main():
     db = connectMongo()
     # deleteDB(db)
     tx_congress = scrapeTexasCongress()
-    initDB(db, tx_congress)
-    # updateDB(db,tx_congress)
+    # initDB(db, tx_congress)
+    updateDB(db,tx_congress)
     printDB(db)
 
 

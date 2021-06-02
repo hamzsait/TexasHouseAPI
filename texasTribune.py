@@ -24,7 +24,7 @@ def getWebdriver(local = False):
 
 def connectMongo(password = password()):
 
-    cluster = MongoClient(f'mongodb+srv://webuser:{password}@cluster0.gg0wl.mongodb.net/texas_congress_db?retryWrites=true&w=majority')
+    cluster = MongoClient(f'mongodb+srv://webuser:{password}@cluster0.gg0wl.mongodb.net/Cluster0?retryWrites=true&w=majority')
     db = cluster['Cluster0']
     collection = db['texas_congress']
     return collection
@@ -123,10 +123,10 @@ def updateDB(db, tx_congress):
 def main():
 
     db = connectMongo()
-    # deleteDB(db)
-    tx_congress = scrapeTexasCongress()
-    # initDB(db, tx_congress)
-    updateDB(db,tx_congress)
+    # # deleteDB(db)
+    # tx_congress = scrapeTexasCongress()
+    # # initDB(db, tx_congress)
+    # updateDB(db,tx_congress)
     printDB(db)
 
 

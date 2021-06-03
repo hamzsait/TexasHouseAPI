@@ -28,8 +28,8 @@ def connectMongo(local = False, password = password()):
     if not local:
         password = environ['DB_PASSWORD']
 
-    cluster = MongoClient(f'mongodb+srv://webuser:{password}@cluster0.gg0wl.mongodb.net/Cluster0?retryWrites=true&w=majority')
-    db = cluster['Cluster0']
+    cluster = MongoClient(f'mongodb+srv://hello:hello@cluster0.txmw4.mongodb.net/houseoftexas?retryWrites=true&w=majority')
+    db = cluster['houseoftexas']
     collection = db['texas_congress']
     return collection
 
@@ -117,7 +117,7 @@ def deleteDB(db):
 
 def initDB(db, tx_congress):
     for congressman in tx_congress:
-        db.insert_one({'_id':tx_congress[congressman]['_id'],'name':congressman,'twitter':tx_congress[congressman]['twitter'], 'facebook':tx_congress[congressman]['facebook']})
+        db.insert_one({'_id':tx_congress[congressman]['_id'],'name':congressman,'email':tx_congress[congressman]['email'], 'image':tx_congress[congressman]['image'],'phone':tx_congress[congressman]['phone'],'twitter':tx_congress[congressman]['twitter'], 'facebook':tx_congress[congressman]['facebook']})
 
 def updateDB(db, tx_congress):
     for congressman in tx_congress:
@@ -129,8 +129,8 @@ def main():
 
     db = connectMongo(True)
     # deleteDB(db)
-    # tx_congress = scrapeTexasCongress()
-    # initDB(db, tx_congress)
+    tx_congress = scrapeTexasCongress(True)
+    initDB(db, tx_congress)
     # updateDB(db,tx_congress)
     printDB(db)
 

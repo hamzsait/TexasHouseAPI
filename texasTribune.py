@@ -23,15 +23,19 @@ def getWebdriver(local = False):
 
     return driver
 
-def connectMongo(password = environ['DB_PASSWORD']):
+def connectMongo(local = False, password = password()):
+
+    if not local:
+        password = environ['DB_PASSWORD']
 
     cluster = MongoClient(f'mongodb+srv://webuser:{password}@cluster0.gg0wl.mongodb.net/Cluster0?retryWrites=true&w=majority')
     db = cluster['Cluster0']
     collection = db['texas_congress']
     return collection
 
-def scrapeTexasCongress():
-    driver = getWebdriver(local = True)
+def scrapeTexasCongress(local = False):
+
+    driver = getWebdriver(local = local)
 
     driver.get("https://www.texastribune.org/directory/#congress")
     sleep(2)
@@ -123,9 +127,9 @@ def updateDB(db, tx_congress):
 
 def main():
 
-    db = connectMongo()
+    db = connectMongo(True)
     # deleteDB(db)
-    tx_congress = scrapeTexasCongress()
+    tx_congress = scrapeTexasCongress(True)
     initDB(db, tx_congress)
     # updateDB(db,tx_congress)
     # printDB(db)

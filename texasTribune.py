@@ -26,8 +26,8 @@ def getWebdriver(local = False):
 
 def connectMongo(local = False):
 
-    if not local:
-        password = environ['DB_PASSWORD']
+    # if not local:
+    #     password = environ['DB_PASSWORD']
 
     cluster = MongoClient(f'mongodb+srv://hello:hello@cluster0.txmw4.mongodb.net/houseoftexas?retryWrites=true&w=majority')
     db = cluster['houseoftexas']

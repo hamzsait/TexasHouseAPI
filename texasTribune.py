@@ -24,7 +24,7 @@ def getWebdriver(local = False):
 
     return driver
 
-def connectMongo(local = False, password = password()):
+def connectMongo(local = False):
 
     if not local:
         password = environ['DB_PASSWORD']

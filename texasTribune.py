@@ -5,7 +5,7 @@ import json
 from selenium import webdriver
 from time import sleep
 from pymongo import MongoClient
-from password import password
+# from password import password
 
 #hope this works
 

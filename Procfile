@@ -1,1 +1,1 @@
-web: python texasTribune.py
+app: python texasTribune.py

@@ -1,4 +1,5 @@
 import os
+from os import environ
 import pprint
 import json
 from selenium import webdriver
@@ -22,7 +23,7 @@ def getWebdriver(local = False):
 
     return driver
 
-def connectMongo(password = password()):
+def connectMongo(password = environ['DB_PASSWORD']):
 
     cluster = MongoClient(f'mongodb+srv://webuser:{password}@cluster0.gg0wl.mongodb.net/Cluster0?retryWrites=true&w=majority')
     db = cluster['Cluster0']

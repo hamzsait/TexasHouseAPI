@@ -128,10 +128,12 @@ def updateDB(db, tx_congress):
 
 def main():
 
-    db = connectMongo()
-    # deleteDB(db)
-    tx_congress = scrapeTexasCongress()
-    initDB(db, tx_congress)
+    local = False
+
+    db = connectMongo(local)
+    deleteDB(db)
+    # tx_congress = scrapeTexasCongress(local)
+    # initDB(db, tx_congress)
     # updateDB(db,tx_congress)
     printDB(db)
 

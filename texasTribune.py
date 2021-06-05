@@ -3,27 +3,12 @@ from os import environ
 import pprint
 import json
 from twitterStats import twitterCongress
-from selenium import webdriver
 from time import sleep
 from pymongo import MongoClient
+from webdriver import getWebdriver
 # from password import password
 
 # testing adding
-
-def getWebdriver(local = False):
-
-    if local:
-        return webdriver.Chrome()
-
-    op = webdriver.ChromeOptions()
-    op.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
-    op.add_argument("--headless")
-    op.add_argument("--no-sandbox")
-    op.add_argument("--disable-dec-sh-usage")
-
-    driver = webdriver.Chrome(executable_path = os.environ.get("CHROMEDRIVER_PATH"), options=op)
-
-    return driver
 
 def connectMongo(local = False):
 
@@ -139,12 +124,12 @@ def main():
 
     local = True
 
-    db = connectMongo(local)
+    #db = connectMongo(local)
     # deleteDB(db)
     tx_congress = scrapeTexasCongress(local)
     # initDB(db, tx_congress)
-    updateDB(db,tx_congress)
-    printDB(db)
+    # updateDB(db,tx_congress)
+    #printDB(db)
 
 
 main()

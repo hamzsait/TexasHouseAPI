@@ -2,6 +2,7 @@ import os
 from os import environ
 import pprint
 import json
+from twitterStats import twitterCongress
 from selenium import webdriver
 from time import sleep
 from pymongo import MongoClient
@@ -100,8 +101,6 @@ def scrapeTexasCongress(local = False):
             except:
                 data['party'] = 'No Party'
 
-            print(json.loads(driver.find_element_by_xpath("//*[contains(text(),'https://schema.org/')]").get_attribute('innerHTML')))
-
             buttons = driver.find_elements_by_class_name("c-button")
             for button in buttons:
                 button_link = button.get_attribute("href")
@@ -110,7 +109,9 @@ def scrapeTexasCongress(local = False):
                     data['facebook'] = button_link
 
                 if('twitter' in button_link):
-                    data['twitter'] = button_link
+
+                    data['twitter'] = twitterCongress(button_link, local = local)
+            
 
             tx_congress[(driver.find_element_by_class_name('politician-header').text.split('\n')[0].split('U.S. Representative ')[1].replace('.',''))] = data
     driver.close()
@@ -140,9 +141,9 @@ def main():
 
     db = connectMongo(local)
     # deleteDB(db)
-    # tx_congress = scrapeTexasCongress(local)
+    tx_congress = scrapeTexasCongress(local)
     # initDB(db, tx_congress)
-    # updateDB(db,tx_congress)
+    updateDB(db,tx_congress)
     printDB(db)
 
 

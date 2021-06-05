@@ -3,9 +3,11 @@ from os import environ
 import pprint
 import json
 from twitterStats import twitterCongress
+from facebookStats import facebookCongress
 from time import sleep
 from pymongo import MongoClient
 from webdriver import getWebdriver
+
 # from password import password
 
 # testing adding
@@ -91,7 +93,7 @@ def scrapeTexasCongress(local = False):
                 button_link = button.get_attribute("href")
 
                 if ('facebook' in button_link):
-                    data['facebook'] = button_link
+                    data['facebook'] = facebookCongress(button_link, local = local)
 
                 if('twitter' in button_link):
 

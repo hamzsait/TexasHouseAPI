@@ -94,6 +94,14 @@ def scrapeTexasCongress(local = False):
             except:
                 data['image'] = 'No Image'
 
+            try:
+                party = json.loads(driver.find_element_by_xpath("//*[contains(text(),'https://schema.org/')]").get_attribute('innerHTML'))['keywords'][3]
+                data['party'] = party
+            except:
+                data['party'] = 'No Party'
+
+            print(json.loads(driver.find_element_by_xpath("//*[contains(text(),'https://schema.org/')]").get_attribute('innerHTML')))
+
             buttons = driver.find_elements_by_class_name("c-button")
             for button in buttons:
                 button_link = button.get_attribute("href")
@@ -123,17 +131,17 @@ def initDB(db, tx_congress):
 def updateDB(db, tx_congress):
     for congressman in tx_congress:
         filter = {'_id':tx_congress[congressman]['_id']}
-        updated_values = {'$set':{'name':congressman,'email':tx_congress[congressman]['email'], 'image':tx_congress[congressman]['image'],'phone':tx_congress[congressman]['phone'],'twitter':tx_congress[congressman]['twitter'], 'facebook':tx_congress[congressman]['facebook']}}
+        updated_values = {'$set':{'name':congressman,'party':tx_congress[congressman]['party'],'email':tx_congress[congressman]['email'], 'image':tx_congress[congressman]['image'],'phone':tx_congress[congressman]['phone'],'twitter':tx_congress[congressman]['twitter'], 'facebook':tx_congress[congressman]['facebook']}}
         db.update_one(filter, updated_values)
 
 def main():
 
-    local = False
+    local = True
 
     db = connectMongo(local)
     # deleteDB(db)
-    tx_congress = scrapeTexasCongress(local)
-    initDB(db, tx_congress)
+    # tx_congress = scrapeTexasCongress(local)
+    # initDB(db, tx_congress)
     # updateDB(db,tx_congress)
     printDB(db)
 

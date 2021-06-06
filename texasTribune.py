@@ -7,10 +7,8 @@ from facebookStats import facebookCongress
 from time import sleep
 from pymongo import MongoClient
 from webdriver import getWebdriver
+from trendsStats import getSuggestion
 
-# from password import password
-
-# testing adding
 
 def connectMongo(local = False):
 
@@ -126,12 +124,18 @@ def main():
 
     local = True
 
-    #db = connectMongo(local)
+    db = connectMongo(local)
     # deleteDB(db)
-    tx_congress = scrapeTexasCongress(local)
+    # tx_congress = scrapeTexasCongress(local)
     # initDB(db, tx_congress)
     # updateDB(db,tx_congress)
-    #printDB(db)
+    # printDB(db)
+
+    count = 0
+    for x in db.find({}):
+        count += 1
+        stats = getSuggestion(x['name'])
+        print(stats)
 
 
 main()

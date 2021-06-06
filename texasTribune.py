@@ -7,7 +7,7 @@ from facebookStats import facebookCongress
 from time import sleep
 from pymongo import MongoClient
 from webdriver import getWebdriver
-from trendsStats import getSuggestion
+from trendsStats import returnStats
 
 
 def connectMongo(local = False):
@@ -91,12 +91,13 @@ def scrapeTexasCongress(local = False):
                 button_link = button.get_attribute("href")
 
                 if ('facebook' in button_link):
-                    data['facebook'] = facebookCongress(button_link, local = local)
+                    data['facebook'] = button_link # facebookCongress(button_link, local = local)
 
                 if('twitter' in button_link):
 
                     data['twitter'] = twitterCongress(button_link, local = local)
             
+            data['trends'] = returnStats((driver.find_element_by_class_name('politician-header').text.split('\n')[0].split('U.S. Representative ')[1].replace('.','')))
 
             tx_congress[(driver.find_element_by_class_name('politician-header').text.split('\n')[0].split('U.S. Representative ')[1].replace('.',''))] = data
     driver.close()
@@ -117,8 +118,9 @@ def initDB(db, tx_congress):
 def updateDB(db, tx_congress):
     for congressman in tx_congress:
         filter = {'_id':tx_congress[congressman]['_id']}
-        updated_values = {'$set':{'name':congressman,'party':tx_congress[congressman]['party'],'email':tx_congress[congressman]['email'], 'image':tx_congress[congressman]['image'],'phone':tx_congress[congressman]['phone'],'twitter':tx_congress[congressman]['twitter'], 'facebook':tx_congress[congressman]['facebook']}}
+        updated_values = {'$set':{'name':congressman,'trends':tx_congress[congressman]['trends'],'party':tx_congress[congressman]['party'],'email':tx_congress[congressman]['email'], 'image':tx_congress[congressman]['image'],'phone':tx_congress[congressman]['phone'],'twitter':tx_congress[congressman]['twitter'], 'facebook':tx_congress[congressman]['facebook']}}
         db.update_one(filter, updated_values)
+
 
 def main():
 
@@ -126,16 +128,10 @@ def main():
 
     db = connectMongo(local)
     # deleteDB(db)
-    # tx_congress = scrapeTexasCongress(local)
+    tx_congress = scrapeTexasCongress(local)
     # initDB(db, tx_congress)
-    # updateDB(db,tx_congress)
-    # printDB(db)
-
-    count = 0
-    for x in db.find({}):
-        count += 1
-        stats = getSuggestion(x['name'])
-        print(stats)
+    updateDB(db,tx_congress)
+    printDB(db)
 
 
 main()

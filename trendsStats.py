@@ -3,7 +3,7 @@ from pytrends.request import TrendReq
 
 
 
-def getSuggestion(keyword):
+def returnStats(keyword):
 
 
     print(keyword)
@@ -23,18 +23,26 @@ def getSuggestion(keyword):
             searchTerm = res
 
     if type(searchTerm) == dict:
-        return searchList(searchTerm)
+        return getPopularity(searchTerm)
     else:
-        return f'None for {searchTerm}'
+        return {}
 
 
 
-def searchList(congressman):
+def getPopularity(congressman):
     
     pytrend = TrendReq()
 
     kw_list = [congressman['title']]
     pytrend.build_payload(kw_list, cat=0, timeframe='today 12-m', geo='', gprop='')
     df = pytrend.interest_over_time()
+    df = df.iloc[:, 0:1]
 
-    return df.iloc[:, 0:1]
+    popularity = dict()
+
+    for row in df.iterrows():
+        for x in (str(row[1]).split(' ')):
+            if '\nName' in x:
+                popularity[(str(row[0]).split(' ')[0])] = int(x.split('\nName:')[0])
+
+    return popularity
